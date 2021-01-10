@@ -42,7 +42,7 @@ class UIBoard(Rect):
     def manage_left_click(self, position):
         clicked_cell = next(filter(lambda x: x.collidepoint(position), self.drawn_cells), None)
         if clicked_cell and clicked_cell.cell.piece:
-            clicked_cell.highlight()
+            clicked_cell.toggle_highlight()
         for cell in self.get_other_highlighted_cells(clicked_cell):
             cell.highlighted = False
 
@@ -66,5 +66,5 @@ class UICell(Rect):
         self.highlighted = False
         super().__init__(left, top, width, height)
 
-    def highlight(self):
+    def toggle_highlight(self):
         self.highlighted = not self.highlighted
