@@ -36,7 +36,12 @@ class UIBoard(Rect):
                     f.render(drawn_cell.cell.piece.icon, True, pg.Color(drawn_cell.cell.piece.color.value)),
                     (drawn_cell.left, drawn_cell.top))
 
+    def get_highlighted_cells(self):
+        return list((filter(lambda x: x.highlighted, self.drawn_cells)))
+
     def manage_left_click(self, position):
+        for cell in self.get_highlighted_cells():
+            cell.highlighted = False
         clicked_cell = next(filter(lambda x: x.collidepoint(position), self.drawn_cells), None)
         if clicked_cell and clicked_cell.cell.piece:
             clicked_cell.highlight()
