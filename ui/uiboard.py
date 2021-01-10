@@ -37,8 +37,8 @@ class UIBoard(Rect):
                     (drawn_cell.left, drawn_cell.top))
 
     def manage_left_click(self, position):
-        clicked_cell = next(filter(lambda x: x.collidepoint(position) == 1, self.drawn_cells), None)
-        if clicked_cell:
+        clicked_cell = next(filter(lambda x: x.collidepoint(position), self.drawn_cells), None)
+        if clicked_cell and clicked_cell.cell.piece:
             clicked_cell.highlight()
 
     def start(self):
