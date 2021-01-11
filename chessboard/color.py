@@ -6,10 +6,3 @@ class Color(Enum):
     BLACK = 'black'
     DARK = 'brown'
     LIGHT = 'beige'
-
-    @classmethod
-    def from_index(cls, index):
-        if index % 2 == 0:
-            return cls.DARK
-        else:
-            return cls.LIGHT
