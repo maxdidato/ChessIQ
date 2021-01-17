@@ -21,6 +21,7 @@ class ChessBoard(list):
         square = next(filter(lambda x: x.alg_not == position, [square for row in self for square in row]),
                       None)
         square.piece = piece
+        piece.position = position
 
     def __initial_pieces_setting(self):
         self.place_piece(Rook(Color.BLACK), 'a8')

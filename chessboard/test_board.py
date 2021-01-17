@@ -24,16 +24,17 @@ class TestChessBoard(TestCase):
     ])
     def test_it_sets_a_piece_given_the_algebraic_notation(self, alg_not, indexes):
         """
-        8 ║♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-        7 ║♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
-        6 ║… … … … … … … …
-        5 ║… … … … … … … …
-        4 ║… … … … … … … …
-        3 ║… … ♘ … … … … …
-        2 ║♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
-        1 ║♖ … ♗ ♕ ♔ ♗ ♘ ♖
+      0  8 ║♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
+      1  7 ║♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
+      2  6 ║… … … … … … … …
+      3  5 ║… … … … … … … …
+      4  4 ║… … … … … … … …   c4 = 4,2
+      5  3 ║… … ♘ … … … … …
+      6  2 ║♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
+      7  1 ║♖ … ♗ ♕ ♔ ♗ ♘ ♖
         —╚═══════════════
         —— a b c d e f g h
+        ___0 1 2 3 4 5 6 7
         """
         board = ChessBoard()
         piece = Knight(Color.WHITE)
