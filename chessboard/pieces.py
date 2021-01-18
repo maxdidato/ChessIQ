@@ -33,6 +33,20 @@ class Knight(Piece):
     def __init__(self, color):
         super().__init__(color, "N", Knight.icons[color])
 
+    def possible_moves(self):
+        indexes = self.__class__.parse_algebraic_notation(self.position)
+        moves = []
+
+        for i in range(1, 3):
+            moves.append((indexes[0] + i, indexes[1] + (3 - i)))
+            moves.append((indexes[0] - i, indexes[1] - (3 - i)))
+            moves.append((indexes[0] + (3 - i), indexes[1] - i))
+            moves.append((indexes[0] - (3 - i), indexes[1] + i))
+        moves = list(filter(lambda x: x[0] in range(0, 8) and (x[1] in range(0, 8)), moves))
+        possible_moves = Moves()
+        possible_moves.set_non_directional([Piece.parse_to_algebraic_notation(i) for i in moves])
+        return possible_moves
+
 
 class Queen(Piece):
     icons = {Color.WHITE: "♕", Color.BLACK: "♛"}
@@ -45,19 +59,19 @@ class Queen(Piece):
         possible_moves = Moves()
 
         possible_moves.set_northeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], -1, -1)], [j for j in range(indexes[1], 8)])])
+                                      zip([i for i in range(indexes[0]-1, -1, -1)], [j for j in range(indexes[1]+1, 8)])])
         possible_moves.set_southeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], 8)], [j for j in range(indexes[1], 8)])])
+                                      zip([i for i in range(indexes[0]+1, 8)], [j for j in range(indexes[1]+1, 8)])])
         possible_moves.set_southwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], 8)], [j for j in range(indexes[1], -1, -1)])])
+                                      zip([i for i in range(indexes[0]+1, 8)], [j for j in range(indexes[1]-1, -1, -1)])])
         possible_moves.set_northwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], -1, -1)],
-                                          [j for j in range(indexes[1], -1, -1)])])
-        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1], 8)])
-        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1], -1, -1)])
-        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0], 8)])
+                                      zip([i for i in range(indexes[0]-1, -1, -1)],
+                                          [j for j in range(indexes[1]-1, -1, -1)])])
+        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]+1, 8)])
+        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]-1, -1, -1)])
+        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]+1, 8)])
         possible_moves.set_north(
-            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0], -1, -1)])
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]-1, -1, -1)])
         return possible_moves
 
 
@@ -72,14 +86,14 @@ class Bishop(Piece):
         possible_moves = Moves()
 
         possible_moves.set_northeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], -1, -1)], [j for j in range(indexes[1], 8)])])
+                                      zip([i for i in range(indexes[0] -1 , -1, -1)], [j for j in range(indexes[1]+1, 8)])])
         possible_moves.set_southeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], 8)], [j for j in range(indexes[1], 8)])])
+                                      zip([i for i in range(indexes[0] + 1, 8)], [j for j in range(indexes[1]+1, 8)])])
         possible_moves.set_southwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], 8)], [j for j in range(indexes[1], -1, -1)])])
+                                      zip([i for i in range(indexes[0] + 1, 8)], [j for j in range(indexes[1]-1, -1, -1)])])
         possible_moves.set_northwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0], -1, -1)],
-                                          [j for j in range(indexes[1], -1, -1)])])
+                                      zip([i for i in range(indexes[0] -1, -1, -1)],
+                                          [j for j in range(indexes[1]-1, -1, -1)])])
 
         return possible_moves
 
@@ -129,11 +143,11 @@ class Rook(Piece):
     def possible_moves(self):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
-        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1], 8)])
-        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1], -1, -1)])
-        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0], 8)])
+        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]+1, 8)])
+        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]-1, -1, -1)])
+        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]+1, 8)])
         possible_moves.set_north(
-            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0], -1, -1)])
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]-1, -1, -1)])
         return possible_moves
 
 
@@ -143,7 +157,7 @@ class Moves:
 
     @staticmethod
     def filter_illegal_moves(moves_list):
-        return list(filter(lambda pos: ord(pos[0]) in range(97, 106) and int(pos[1]) in range(1, 9),moves_list))
+        return list(filter(lambda pos: ord(pos[0]) in range(97, 106) and int(pos[1]) in range(1, 9), moves_list))
 
     def all_moves(self):
         return [item for subl in self.moves.values() for item in subl]
@@ -171,3 +185,18 @@ class Moves:
 
     def set_southwest(self, moves_list):
         self.moves['SW'] = Moves.filter_illegal_moves(moves_list)
+
+    def set_non_directional(self, moves_list):
+        self.moves['ND'] = Moves.filter_illegal_moves(moves_list)
+
+    def get_directional_moves(self):
+        copy = self.moves.copy()
+        if 'ND' in copy:
+            del (copy['ND'])
+        return copy
+
+    def get_non_directional_moves(self):
+        if 'ND' in self.moves:
+            return self.moves['ND']
+        else:
+            return []

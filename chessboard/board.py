@@ -23,6 +23,31 @@ class ChessBoard(list):
         square.piece = piece
         piece.position = position
 
+    def move_piece(self, source_pos, dest_pos):
+        source_square = next(filter(lambda x: x.alg_not == source_pos, [square for row in self for square in row]),
+                             None)
+        dest_square = next(filter(lambda x: x.alg_not == dest_pos, [square for row in self for square in row]), None)
+        dest_square.piece = source_square.piece
+        dest_square.piece.position = dest_pos
+        source_square.piece = None
+
+    # TODO: put all squares in map indexed by algebraic position to save loops
+    def possible_moves(self, square):
+        possible_moves = []
+        for positions in square.piece.possible_moves().get_directional_moves().values():
+            for position in positions:
+                candidate_square = next(filter(lambda x: x.alg_not == position, [square for row in self for square in row]))
+                if candidate_square.piece:
+                    if candidate_square.piece.color != square.piece.color:
+                        possible_moves.append(position)
+                    break
+                else:
+                    possible_moves.append(position)
+        for position in square.piece.possible_moves().get_non_directional_moves():
+            if not next(filter(lambda x: x.alg_not == position, [square for row in self for square in row])).piece:
+                possible_moves.append(position)
+        return possible_moves
+
     def __initial_pieces_setting(self):
         self.place_piece(Rook(Color.BLACK), 'a8')
         self.place_piece(Knight(Color.BLACK), 'b8')

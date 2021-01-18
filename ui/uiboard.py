@@ -26,6 +26,8 @@ class UIBoard(Rect):
         for drawn_square in self.drawn_squares:
             if drawn_square.highlighted:
                 pg.draw.rect(self.__screen, pg.Color('yellow'), drawn_square, 0)
+            elif drawn_square.move_candidate:
+                pg.draw.rect(self.__screen, pg.Color('lightblue'), drawn_square, 0)
             else:
                 pg.draw.rect(self.__screen, pg.Color(drawn_square.square.color.value), drawn_square, 0)
             if drawn_square.square.piece:
@@ -38,14 +40,24 @@ class UIBoard(Rect):
         return list(filter(lambda x: x != to_exclude, filter(lambda x: x.highlighted, self.drawn_squares)))
 
     def manage_left_click(self, position):
+        clicked_square = next(filter(lambda x: x.collidepoint(position), self.drawn_squares), None)
+        if not clicked_square:
+            return
+        if clicked_square.move_candidate:
+            highlighted_square = next(filter(lambda x: x.highlighted,self.drawn_squares))
+            self.board.move_piece(highlighted_square.square.alg_not,clicked_square.square.alg_not)
+            for square in self.drawn_squares:
+                square.highlighted = False
+                square.move_candidate = False
+            return
         for square in self.drawn_squares:
             square.highlighted = False
-        clicked_square = next(filter(lambda x: x.collidepoint(position), self.drawn_squares), None)
+            square.move_candidate = False
         if clicked_square and clicked_square.square.piece:
             clicked_square.toggle_highlight()
             if clicked_square.highlighted:
-                for move in clicked_square.square.piece.possible_moves().all_moves():
-                    next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).highlighted = True
+                for move in self.board.possible_moves(clicked_square.square):
+                    next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).move_candidate = True
         # for square in self.get_other_highlighted_squares(clicked_square):
         #     square.highlighted = False
 
@@ -67,6 +79,7 @@ class UISquare(Rect):
     def __init__(self, left, top, width, height, square):
         self.square = square
         self.highlighted = False
+        self.move_candidate = False
         super().__init__(left, top, width, height)
 
     def toggle_highlight(self):
