@@ -44,7 +44,8 @@ class ChessBoard(list):
                 else:
                     possible_moves.append(position)
         for position in square.piece.possible_moves().get_non_directional_moves():
-            if not next(filter(lambda x: x.alg_not == position, [square for row in self for square in row])).piece:
+            candidate_square = next(filter(lambda x: x.alg_not == position, [square for row in self for square in row]))
+            if not candidate_square.piece or candidate_square.piece.color != square.piece.color:
                 possible_moves.append(position)
         return possible_moves
 
