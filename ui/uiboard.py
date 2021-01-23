@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.locals import *
+import string
 
 
 class UIBoard(Rect):
@@ -14,12 +15,12 @@ class UIBoard(Rect):
     def __initialise(self):
         pg.init()
         self.__screen.fill((255, 255, 255))
-        for row_idx, row in enumerate(self.board):
-            for cell_idx, cell in enumerate(row):
+        for row_idx, num in enumerate(reversed(range(1, 9))):
+            for cell_idx, let in enumerate(list(string.ascii_lowercase[0:8])):
                 self.drawn_squares.append(
                     UISquare(self.top + self.__square_size * cell_idx, self.left + self.__square_size * row_idx,
                              self.__square_size, self.__square_size,
-                             cell))
+                             self.board[let+str(num)]))
         return self
 
     def draw_board(self):
