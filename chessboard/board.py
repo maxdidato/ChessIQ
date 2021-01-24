@@ -28,7 +28,7 @@ class ChessBoard(dict):
 
     def possible_moves(self, square):
         possible_moves = []
-        for positions in square.piece.possible_moves().get_directional_moves().values():
+        for positions in square.piece.possible_moves().get_directional_moves():
             for position in positions:
                 candidate_square = self[position]
                 if candidate_square.piece:

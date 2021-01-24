@@ -8,9 +8,11 @@ class Piece:
         self.name = name
         self.icon = icon
         self.position = None
+        self.alg_not = None
 
     def set_position(self, position):
         self.position = position
+        self.alg_not = AlgNot(position[:1], int(position[-1]))
 
     @staticmethod
     def parse_algebraic_notation(notation):
@@ -44,7 +46,7 @@ class Knight(Piece):
             moves.append((indexes[0] - (3 - i), indexes[1] + i))
         moves = list(filter(lambda x: x[0] in range(0, 8) and (x[1] in range(0, 8)), moves))
         possible_moves = Moves()
-        possible_moves.set_non_directional([Piece.parse_to_algebraic_notation(i) for i in moves])
+        possible_moves.add_non_directional_moves([Piece.parse_to_algebraic_notation(i) for i in moves])
         return possible_moves
 
 
@@ -58,20 +60,26 @@ class Queen(Piece):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
 
-        possible_moves.set_northeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0]-1, -1, -1)], [j for j in range(indexes[1]+1, 8)])])
-        possible_moves.set_southeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0]+1, 8)], [j for j in range(indexes[1]+1, 8)])])
-        possible_moves.set_southwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0]+1, 8)], [j for j in range(indexes[1]-1, -1, -1)])])
-        possible_moves.set_northwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0]-1, -1, -1)],
-                                          [j for j in range(indexes[1]-1, -1, -1)])])
-        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]+1, 8)])
-        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]-1, -1, -1)])
-        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]+1, 8)])
-        possible_moves.set_north(
-            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]-1, -1, -1)])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] - 1, -1, -1)],
+                                                  [j for j in range(indexes[1] + 1, 8)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] + 1, 8)],
+                                                  [j for j in range(indexes[1] + 1, 8)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] + 1, 8)],
+                                                  [j for j in range(indexes[1] - 1, -1, -1)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] - 1, -1, -1)],
+                                                  [j for j in range(indexes[1] - 1, -1, -1)])])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1] + 1, 8)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1] - 1, -1, -1)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0] + 1, 8)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0] - 1, -1, -1)])
         return possible_moves
 
 
@@ -85,15 +93,18 @@ class Bishop(Piece):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
 
-        possible_moves.set_northeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0] -1 , -1, -1)], [j for j in range(indexes[1]+1, 8)])])
-        possible_moves.set_southeast([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0] + 1, 8)], [j for j in range(indexes[1]+1, 8)])])
-        possible_moves.set_southwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0] + 1, 8)], [j for j in range(indexes[1]-1, -1, -1)])])
-        possible_moves.set_northwest([Piece.parse_to_algebraic_notation(i) for i in
-                                      zip([i for i in range(indexes[0] -1, -1, -1)],
-                                          [j for j in range(indexes[1]-1, -1, -1)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] - 1, -1, -1)],
+                                                  [j for j in range(indexes[1] + 1, 8)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] + 1, 8)],
+                                                  [j for j in range(indexes[1] + 1, 8)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] + 1, 8)],
+                                                  [j for j in range(indexes[1] - 1, -1, -1)])])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation(i) for i in
+                                              zip([i for i in range(indexes[0] - 1, -1, -1)],
+                                                  [j for j in range(indexes[1] - 1, -1, -1)])])
 
         return possible_moves
 
@@ -108,9 +119,11 @@ class Pawn(Piece):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
         if self.color == Color.WHITE:
-            possible_moves.set_north([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
+            possible_moves.add_directional_moves(self.alg_not.north(1))
+            # possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
         else:
-            possible_moves.set_south([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
+            possible_moves.add_directional_moves(self.alg_not.south(1))
+            # possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
         return possible_moves
 
 
@@ -123,14 +136,14 @@ class King(Piece):
     def possible_moves(self):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
-        possible_moves.set_north([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
-        possible_moves.set_northeast([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1] + 1))])
-        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], indexes[1] + 1))])
-        possible_moves.set_southeast([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1] + 1))])
-        possible_moves.set_south([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
-        possible_moves.set_southwest([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1] - 1))])
-        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], indexes[1] - 1))])
-        possible_moves.set_northwest([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1] - 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1] + 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0], indexes[1] + 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1] + 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1] - 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0], indexes[1] - 1))])
+        possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1] - 1))])
         return possible_moves
 
 
@@ -143,60 +156,65 @@ class Rook(Piece):
     def possible_moves(self):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
-        possible_moves.set_east([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]+1, 8)])
-        possible_moves.set_west([Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1]-1, -1, -1)])
-        possible_moves.set_south([Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]+1, 8)])
-        possible_moves.set_north(
-            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0]-1, -1, -1)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1] + 1, 8)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((indexes[0], j)) for j in range(indexes[1] - 1, -1, -1)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0] + 1, 8)])
+        possible_moves.add_directional_moves(
+            [Piece.parse_to_algebraic_notation((i, indexes[1])) for i in range(indexes[0] - 1, -1, -1)])
         return possible_moves
+
+
+class AlgNot:
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    nums = [1, 2, 3, 4, 5, 6, 7, 8]
+
+    def __init__(self, letter, num):
+        self.letter = letter
+        self.num = num
+
+    # Think about composing methods to express mixed direction. like north().east().build(2)
+    def north(self, steps):
+        positions = zip([self.letter for i in range(1, 8)], self.nums[self.num:self.num + steps:])
+        return [pos[0] + str(pos[1]) for pos in positions]
+
+    def south(self, steps):
+        positions = zip([self.letter for _ in range(1, 8)],
+                        reversed(self.nums[max(0, self.num - 1 - steps):self.num - 1:]))
+        return [pos[0] + str(pos[1]) for pos in positions]
+
+    def east(self, steps):
+        index = self.letters.index(self.letter)
+        positions = zip(self.letters[index + 1:index + 1 + steps:], [self.num for _ in range(1, 8)])
+        return [pos[0] + str(pos[1]) for pos in positions]
+
+    def west(self, steps):
+        index = self.letters.index(self.letter)
+        positions = zip(reversed(self.letters[max(0, index - steps):index:]), [self.num for _ in range(1, 8)])
+        return [pos[0] + str(pos[1]) for pos in positions]
+
+
+# possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
 
 
 class Moves:
     def __init__(self):
-        self.moves = {}
+        self.moves = [[], []]
 
     @staticmethod
     def filter_illegal_moves(moves_list):
         return list(filter(lambda pos: ord(pos[0]) in range(97, 106) and int(pos[1]) in range(1, 9), moves_list))
 
-    def all_moves(self):
-        return [item for subl in self.moves.values() for item in subl]
+    def add_directional_moves(self, moves_list):
+        self.moves[0].append(Moves.filter_illegal_moves(moves_list))
 
-    def set_north(self, moves_list):
-        self.moves['N'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_east(self, moves_list):
-        self.moves['E'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_south(self, moves_list):
-        self.moves['S'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_west(self, moves_list):
-        self.moves['W'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_northeast(self, moves_list):
-        self.moves['NE'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_northwest(self, moves_list):
-        self.moves['NW'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_southeast(self, moves_list):
-        self.moves['SE'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_southwest(self, moves_list):
-        self.moves['SW'] = Moves.filter_illegal_moves(moves_list)
-
-    def set_non_directional(self, moves_list):
-        self.moves['ND'] = Moves.filter_illegal_moves(moves_list)
+    def add_non_directional_moves(self, moves_list):
+        self.moves[1] = Moves.filter_illegal_moves(moves_list)
 
     def get_directional_moves(self):
-        copy = self.moves.copy()
-        if 'ND' in copy:
-            del (copy['ND'])
-        return copy
+        return self.moves[0]
 
     def get_non_directional_moves(self):
-        if 'ND' in self.moves:
-            return self.moves['ND']
-        else:
-            return []
+        return self.moves[1]
