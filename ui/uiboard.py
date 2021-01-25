@@ -39,14 +39,14 @@ class UIBoard(Rect):
 
     def get_other_highlighted_squares(self, to_exclude):
         return list(filter(lambda x: x != to_exclude, filter(lambda x: x.highlighted, self.drawn_squares)))
-
+#TODO: Decorator pattern for drawn_square
     def manage_left_click(self, position):
         clicked_square = next(filter(lambda x: x.collidepoint(position), self.drawn_squares), None)
         if not clicked_square:
             return
         if clicked_square.move_candidate:
             highlighted_square = next(filter(lambda x: x.highlighted,self.drawn_squares))
-            self.board.move_piece(highlighted_square.square.alg_not,clicked_square.square.alg_not)
+            highlighted_square.square.move_piece(clicked_square.square)
             for square in self.drawn_squares:
                 square.highlighted = False
                 square.move_candidate = False

@@ -9,6 +9,11 @@ class Square:
         self.alg_not = alg_not
         self.piece = None
 
+    def move_piece(self,dest_square):
+        dest_square.piece = self.piece
+        dest_square.piece.position = dest_square.alg_not
+        self.piece = None
+
 
 class ChessBoard(dict):
 

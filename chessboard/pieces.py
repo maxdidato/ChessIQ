@@ -119,11 +119,9 @@ class Pawn(Piece):
         indexes = self.__class__.parse_algebraic_notation(self.position)
         possible_moves = Moves()
         if self.color == Color.WHITE:
-            possible_moves.add_directional_moves(self.alg_not.north(1))
-            # possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
+            possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])
         else:
-            possible_moves.add_directional_moves(self.alg_not.south(1))
-            # possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
+            possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] + 1, indexes[1]))])
         return possible_moves
 
 
@@ -171,29 +169,39 @@ class AlgNot:
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     nums = [1, 2, 3, 4, 5, 6, 7, 8]
 
-    def __init__(self, letter, num):
-        self.letter = letter
-        self.num = num
+    def __init__(self, pos):
+        if pos[0] in self.letters and pos[1] in self.nums:
+            self.letter = pos[0]
+            self.num = pos[1]
+        else:
+            raise ValueError("Must have first element lower case char between a:h and second element int between 1:8")
 
-    # Think about composing methods to express mixed direction. like north().east().build(2)
     def north(self, steps):
-        positions = zip([self.letter for i in range(1, 8)], self.nums[self.num:self.num + steps:])
-        return [pos[0] + str(pos[1]) for pos in positions]
+        return list(zip([self.letter for _ in range(1, 8)], self.nums[self.num:self.num + steps:]))
 
     def south(self, steps):
-        positions = zip([self.letter for _ in range(1, 8)],
-                        reversed(self.nums[max(0, self.num - 1 - steps):self.num - 1:]))
-        return [pos[0] + str(pos[1]) for pos in positions]
+        return list(
+            zip([self.letter for _ in range(1, 8)], reversed(self.nums[max(0, self.num - 1 - steps):self.num - 1:])))
 
     def east(self, steps):
         index = self.letters.index(self.letter)
-        positions = zip(self.letters[index + 1:index + 1 + steps:], [self.num for _ in range(1, 8)])
-        return [pos[0] + str(pos[1]) for pos in positions]
+        return list(zip(self.letters[index + 1:index + 1 + steps:], [self.num for _ in range(1, 8)]))
 
     def west(self, steps):
         index = self.letters.index(self.letter)
-        positions = zip(reversed(self.letters[max(0, index - steps):index:]), [self.num for _ in range(1, 8)])
-        return [pos[0] + str(pos[1]) for pos in positions]
+        return list(zip(reversed(self.letters[max(0, index - steps):index:]), [self.num for _ in range(1, 8)]))
+
+    def north_east(self, steps):
+        return list(zip([i[0] for i in self.east(steps)], [j[1] for j in self.north(steps)]))
+
+    def south_west(self, steps):
+        return list(zip([i[0] for i in self.west(steps)], [j[1] for j in self.south(steps)]))
+
+    def south_east(self, steps):
+        return list(zip([i[0] for i in self.east(steps)], [j[1] for j in self.south(steps)]))
+
+    def north_west(self, steps):
+        return list(zip([i[0] for i in self.west(steps)], [j[1] for j in self.north(steps)]))
 
 
 # possible_moves.add_directional_moves([Piece.parse_to_algebraic_notation((indexes[0] - 1, indexes[1]))])

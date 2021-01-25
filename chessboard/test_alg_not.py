@@ -6,89 +6,177 @@ from parameterized import parameterized
 class TestChessBoard(TestCase):
 
     @parameterized.expand([
-        (('a', 1), 1, ['a2']),
-        (('a', 5), 1, ['a6']),
-        (('d', 2), 3, ['d3', 'd4', 'd5']),
-        (('e', 6), 1, ['e7']),
-        (('h', 3), 6, ['h4', 'h5', 'h6', 'h7', 'h8']),
-        (('b', 4), 1, ['b5']),
-        (('b', 7), 1, ['b8']),
+        (('a', 1), 1, [('a', 2)]),
+        (('a', 5), 1, [('a', 6)]),
+        (('d', 2), 3, [('d', 3), ('d', 4), ('d', 5)]),
+        (('e', 6), 1, [('e', 7)]),
+        (('h', 3), 6, [('h', 4), ('h', 5), ('h', 6), ('h', 7), ('h', 8)]),
+        (('b', 4), 1, [('b', 5)]),
+        (('b', 7), 1, [('b', 8)]),
         (('a', 8), 1, []),
         (('c', 8), 4, []),
         (('e', 8), 8, []),
-        (('a', 1), 2, ['a2', 'a3']),
+        (('a', 1), 2, [('a', 2), ('a', 3)]),
         (('a', 8), 8, []),
-        (('a', 4), 3, ['a5', 'a6', 'a7']),
-        (('a', 4), 8, ['a5', 'a6', 'a7', 'a8']),
-        (('h', 1), 8, ['h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8']),
+        (('a', 4), 3, [('a', 5), ('a', 6), ('a', 7)]),
+        (('a', 4), 8, [('a', 5), ('a', 6), ('a', 7), ('a', 8)]),
+        (('h', 1), 8, [('h', 2), ('h', 3), ('h', 4), ('h', 5), ('h', 6), ('h', 7), ('h', 8)]),
     ])
     def test_num_of_positions_north_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = AlgNot(start_pos[0], start_pos[1])
+        alg_not = AlgNot(start_pos)
         positions = alg_not.north(num_of_steps)
         self.assertEqual(expected, positions)
 
     @parameterized.expand([
         (('a', 1), 1, []),
-        (('a', 5), 1, ['a4']),
-        (('d', 2), 3, ['d1']),
-        (('e', 6), 1, ['e5']),
-        (('h', 3), 6, ['h2', 'h1']),
-        (('b', 4), 1, ['b3']),
-        (('b', 7), 1, ['b6']),
-        (('a', 8), 1, ['a7']),
-        (('c', 8), 4, ['c7', 'c6', 'c5', 'c4']),
-        (('e', 8), 8, ['e7', 'e6', 'e5', 'e4', 'e3', 'e2', 'e1']),
+        (('a', 5), 1, [('a', 4)]),
+        (('d', 2), 3, [('d', 1)]),
+        (('e', 6), 1, [('e', 5)]),
+        (('h', 3), 6, [('h', 2), ('h', 1)]),
+        (('b', 4), 1, [('b', 3)]),
+        (('b', 7), 1, [('b', 6)]),
+        (('a', 8), 1, [('a', 7)]),
+        (('c', 8), 4, [('c', 7), ('c', 6), ('c', 5), ('c', 4)]),
+        (('e', 8), 8, [('e', 7), ('e', 6), ('e', 5), ('e', 4), ('e', 3), ('e', 2), ('e', 1)]),
         (('a', 1), 2, []),
-        (('a', 2), 8, ['a1']),
-        (('a', 4), 3, ['a3', 'a2', 'a1']),
-        (('a', 4), 8, ['a3', 'a2', 'a1']),
+        (('a', 2), 8, [('a', 1)]),
+        (('a', 4), 3, [('a', 3), ('a', 2), ('a', 1)]),
+        (('a', 4), 8, [('a', 3), ('a', 2), ('a', 1)]),
         (('h', 1), 8, []),
     ])
     def test_num_of_positions_south_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = AlgNot(start_pos[0], start_pos[1])
+        alg_not = AlgNot(start_pos)
         positions = alg_not.south(num_of_steps)
         self.assertEqual(expected, positions)
 
     @parameterized.expand([
-        (('a', 1), 1, ['b1']),
-        (('a', 5), 1, ['b5']),
-        (('d', 2), 3, ['e2', 'f2', 'g2']),
-        (('e', 6), 1, ['f6']),
+        (('a', 1), 1, [('b', 1)]),
+        (('a', 5), 1, [('b', 5)]),
+        (('d', 2), 3, [('e', 2), ('f', 2), ('g', 2)]),
+        (('e', 6), 1, [('f', 6)]),
         (('h', 3), 6, []),
-        (('b', 4), 1, ['c4']),
-        (('b', 7), 1, ['c7']),
-        (('a', 8), 1, ['b8']),
-        (('c', 8), 4, ['d8', 'e8', 'f8', 'g8']),
-        (('e', 8), 8, ['f8', 'g8', 'h8']),
-        (('a', 1), 2, ['b1', 'c1']),
-        (('a', 2), 8, ['b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2']),
-        (('g', 4), 3, ['h4']),
-        (('d', 4), 8, ['e4', 'f4', 'g4', 'h4']),
+        (('b', 4), 1, [('c', 4)]),
+        (('b', 7), 1, [('c', 7)]),
+        (('a', 8), 1, [('b', 8)]),
+        (('c', 8), 4, [('d', 8), ('e', 8), ('f', 8), ('g', 8)]),
+        (('e', 8), 8, [('f', 8), ('g', 8), ('h', 8)]),
+        (('a', 1), 2, [('b', 1), ('c', 1)]),
+        (('a', 2), 8, [('b', 2), ('c', 2), ('d', 2), ('e', 2), ('f', 2), ('g', 2), ('h', 2)]),
+        (('g', 4), 3, [('h', 4)]),
+        (('d', 4), 8, [('e', 4), ('f', 4), ('g', 4), ('h', 4)]),
         (('h', 1), 8, []),
     ])
     def test_num_of_positions_east_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = AlgNot(start_pos[0], start_pos[1])
+        alg_not = AlgNot(start_pos)
         positions = alg_not.east(num_of_steps)
         self.assertEqual(expected, positions)
 
     @parameterized.expand([
         (('a', 1), 1, []),
         (('a', 5), 1, []),
-        (('d', 2), 3, ['c2', 'b2', 'a2']),
-        (('e', 6), 1, ['d6']),
-        (('h', 3), 6, ['g3', 'f3', 'e3', 'd3', 'c3', 'b3']),
-        (('b', 4), 1, ['a4']),
-        (('b', 7), 1, ['a7']),
+        (('d', 2), 3, [('c', 2), ('b', 2), ('a', 2)]),
+        (('e', 6), 1, [('d', 6)]),
+        (('h', 3), 6, [('g', 3), ('f', 3), ('e', 3), ('d', 3), ('c', 3), ('b', 3)]),
+        (('b', 4), 1, [('a', 4)]),
+        (('b', 7), 1, [('a', 7)]),
         (('a', 8), 1, []),
-        (('c', 8), 4, ['b8', 'a8']),
-        (('e', 8), 8, ['d8', 'c8', 'b8', 'a8']),
+        (('c', 8), 4, [('b', 8), ('a', 8)]),
+        (('e', 8), 8, [('d', 8), ('c', 8), ('b', 8), ('a', 8)]),
         (('a', 1), 2, []),
         (('a', 2), 8, []),
-        (('g', 4), 3, ['f4', 'e4', 'd4']),
-        (('d', 4), 8, ['c4', 'b4', 'a4']),
-        # (('h', 1), 8, ['g1', 'f1', 'e1', 'd1', 'c1', 'b1', 'a1']),
+        (('g', 4), 3, [('f', 4), ('e', 4), ('d', 4)]),
+        (('d', 4), 8, [('c', 4), ('b', 4), ('a', 4)]),
+        (('h', 1), 8, [('g', 1), ('f', 1), ('e', 1), ('d', 1), ('c', 1), ('b', 1), ('a', 1)]),
     ])
     def test_num_of_positions_west_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = AlgNot(start_pos[0], start_pos[1])
+        alg_not = AlgNot(start_pos)
         positions = alg_not.west(num_of_steps)
+        self.assertEqual(expected, positions)
+
+    @parameterized.expand([
+        (('a', 1), 8, [('b', 2), ('c', 3), ('d', 4), ('e', 5), ('f', 6), ('g', 7), ('h', 8)]),
+        (('a', 5), 1, [('b', 6)]),
+        (('d', 2), 3, [('e', 3), ('f', 4), ('g', 5)]),
+        (('e', 6), 1, [('f', 7)]),
+        (('h', 3), 6, []),
+        (('b', 4), 1, [('c', 5)]),
+        (('b', 7), 1, [('c', 8)]),
+        (('a', 8), 1, []),
+        (('c', 8), 4, []),
+        (('e', 8), 8, []),
+        (('a', 1), 2, [('b', 2), ('c', 3)]),
+        (('a', 2), 8, [('b', 3), ('c', 4), ('d', 5), ('e', 6), ('f', 7), ('g', 8)]),
+        (('g', 4), 3, [('h', 5)]),
+        (('d', 4), 8, [('e', 5), ('f', 6), ('g', 7), ('h', 8)]),
+        (('h', 1), 8, []),
+    ])
+    def test_num_of_positions_north_east_from_current(self, start_pos, num_of_steps, expected):
+        alg_not = AlgNot(start_pos)
+        positions = alg_not.north_east(num_of_steps)
+        self.assertEqual(expected, positions)
+
+    @parameterized.expand([
+        (('a', 1), 8, []),
+        (('a', 5), 1, []),
+        (('d', 2), 3, [('c', 1)]),
+        (('e', 6), 4, [('d', 5), ('c', 4), ('b', 3), ('a', 2)]),
+        (('h', 3), 6, [('g', 2), ('f', 1)]),
+        (('b', 4), 1, [('a', 3)]),
+        (('b', 7), 1, [('a', 6)]),
+        (('a', 8), 1, []),
+        (('c', 8), 4, [('b', 7), ('a', 6)]),
+        (('e', 8), 8, [('d', 7), ('c', 6), ('b', 5), ('a', 4)]),
+        (('a', 1), 2, []),
+        (('a', 2), 8, []),
+        (('g', 4), 3, [('f', 3), ('e', 2), ('d', 1)]),
+        (('d', 4), 8, [('c', 3), ('b', 2), ('a', 1)]),
+        (('h', 8), 8, [('g', 7), ('f', 6), ('e', 5), ('d', 4), ('c', 3), ('b', 2), ('a', 1)]),
+    ])
+    def test_num_of_positions_south_west_from_current(self, start_pos, num_of_steps, expected):
+        alg_not = AlgNot(start_pos)
+        positions = alg_not.south_west(num_of_steps)
+        self.assertEqual(expected, positions)
+
+    @parameterized.expand([
+        (('a', 1), 8, []),
+        (('a', 5), 1, [('b', 4)]),
+        (('d', 2), 3, [('e', 1)]),
+        (('e', 6), 4, [('f', 5), ('g', 4), ('h', 3)]),
+        (('h', 3), 6, []),
+        (('b', 4), 1, [('c', 3)]),
+        (('b', 7), 1, [('c', 6)]),
+        (('a', 8), 8, [('b', 7), ('c', 6), ('d', 5), ('e', 4), ('f', 3), ('g', 2), ('h', 1)]),
+        (('c', 8), 4, [('d', 7), ('e', 6), ('f', 5), ('g', 4)]),
+        (('e', 8), 8, [('f', 7), ('g', 6), ('h', 5)]),
+        (('a', 1), 2, []),
+        (('a', 2), 8, [('b', 1)]),
+        (('g', 4), 3, [('h', 3)]),
+        (('d', 4), 8, [('e', 3), ('f', 2), ('g', 1)]),
+        (('h', 8), 8, []),
+    ])
+    def test_num_of_positions_south_east_from_current(self, start_pos, num_of_steps, expected):
+        alg_not = AlgNot(start_pos)
+        positions = alg_not.south_east(num_of_steps)
+        self.assertEqual(expected, positions)
+
+    @parameterized.expand([
+        (('a', 1), 8, []),
+        (('a', 5), 1, []),
+        (('d', 2), 3, [('c', 3), ('b', 4), ('a', 5)]),
+        (('e', 6), 4, [('d', 7), ('c', 8)]),
+        (('h', 3), 6, [('g', 4), ('f', 5), ('e', 6), ('d', 7), ('c', 8)]),
+        (('b', 4), 1, [('a', 5)]),
+        (('b', 7), 1, [('a', 8)]),
+        (('a', 8), 1, []),
+        (('c', 8), 4, []),
+        (('e', 8), 8, []),
+        (('a', 1), 2, []),
+        (('a', 2), 8, []),
+        (('g', 4), 3, [('f', 5), ('e', 6), ('d', 7)]),
+        (('d', 4), 8, [('c', 5), ('b', 6), ('a', 7)]),
+        (('h', 1), 8, [('g', 2), ('f', 3), ('e', 4), ('d', 5), ('c', 6), ('b', 7), ('a', 8)]),
+    ])
+    def test_num_of_positions_north_west_from_current(self, start_pos, num_of_steps, expected):
+        alg_not = AlgNot(start_pos)
+        positions = alg_not.north_west(num_of_steps)
         self.assertEqual(expected, positions)
