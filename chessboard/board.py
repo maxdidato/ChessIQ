@@ -14,6 +14,10 @@ class Square:
         dest_square.piece.position = dest_square.alg_not
         self.piece = None
 
+    def place_piece(self, piece):
+        self.piece = piece
+        piece.position = self.alg_not
+
 
 class ChessBoard(dict):
 
@@ -21,15 +25,6 @@ class ChessBoard(dict):
         super().__init__()
         self.__initialize()
         self.__initial_pieces_setting()
-
-    def place_piece(self, piece, position):
-        self[position].piece = piece
-        piece.position = position
-
-    def move_piece(self, source_pos, dest_pos):
-        self[dest_pos].piece = self[source_pos].piece
-        self[dest_pos].piece.position = dest_pos
-        self[source_pos].piece = None
 
     def possible_moves(self, square):
         possible_moves = []
@@ -49,26 +44,26 @@ class ChessBoard(dict):
         return possible_moves
 
     def __initial_pieces_setting(self):
-        self.place_piece(Rook(Color.BLACK), 'a8')
-        self.place_piece(Knight(Color.BLACK), 'b8')
-        self.place_piece(Bishop(Color.BLACK), 'c8')
-        self.place_piece(Queen(Color.BLACK), 'd8')
-        self.place_piece(King(Color.BLACK), 'e8')
-        self.place_piece(Bishop(Color.BLACK), 'f8')
-        self.place_piece(Knight(Color.BLACK), 'g8')
-        self.place_piece(Rook(Color.BLACK), 'h8')
+        self['a8'].place_piece(Rook(Color.BLACK))
+        self['b8'].place_piece(Knight(Color.BLACK))
+        self['c8'].place_piece(Bishop(Color.BLACK))
+        self['d8'].place_piece(Queen(Color.BLACK))
+        self['e8'].place_piece(King(Color.BLACK))
+        self['f8'].place_piece(Bishop(Color.BLACK))
+        self['g8'].place_piece(Knight(Color.BLACK))
+        self['h8'].place_piece(Rook(Color.BLACK))
         for letter in list(string.ascii_lowercase[0:8]):
-            self.place_piece(Pawn(Color.BLACK), letter + '7')
-        self.place_piece(Rook(Color.WHITE), 'a1')
-        self.place_piece(Knight(Color.WHITE), 'b1')
-        self.place_piece(Bishop(Color.WHITE), 'c1')
-        self.place_piece(Queen(Color.WHITE), 'd1')
-        self.place_piece(King(Color.WHITE), 'e1')
-        self.place_piece(Bishop(Color.WHITE), 'f1')
-        self.place_piece(Knight(Color.WHITE), 'g1')
-        self.place_piece(Rook(Color.WHITE), 'h1')
+            self[letter+'7'].place_piece(Pawn(Color.BLACK))
+        self['a1'].place_piece(Rook(Color.WHITE))
+        self['b1'].place_piece(Knight(Color.WHITE))
+        self['c1'].place_piece(Bishop(Color.WHITE))
+        self['d1'].place_piece(Queen(Color.WHITE))
+        self['e1'].place_piece(King(Color.WHITE))
+        self['f1'].place_piece(Bishop(Color.WHITE))
+        self['g1'].place_piece(Knight(Color.WHITE))
+        self['h1'].place_piece(Rook(Color.WHITE))
         for letter in list(string.ascii_lowercase[0:8]):
-            self.place_piece(Pawn(Color.WHITE), letter + '2')
+            self[letter+'2'].place_piece(Pawn(Color.WHITE))
 
     def __initialize(self):
         for i, num in enumerate(reversed(range(1, 9))):
