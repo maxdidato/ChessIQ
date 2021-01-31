@@ -1,5 +1,5 @@
 from unittest import TestCase
-from chessboard.pieces import Position
+from chessboard.pieces import Pos
 from parameterized import parameterized
 
 
@@ -23,7 +23,7 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, [('h', 2), ('h', 3), ('h', 4), ('h', 5), ('h', 6), ('h', 7), ('h', 8)]),
     ])
     def test_num_of_positions_north_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.north(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -45,7 +45,7 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, []),
     ])
     def test_num_of_positions_south_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.south(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -67,7 +67,7 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, []),
     ])
     def test_num_of_positions_east_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.east(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -89,7 +89,7 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, [('g', 1), ('f', 1), ('e', 1), ('d', 1), ('c', 1), ('b', 1), ('a', 1)]),
     ])
     def test_num_of_positions_west_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.west(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -111,7 +111,7 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, []),
     ])
     def test_num_of_positions_north_east_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.north_east(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -133,7 +133,7 @@ class TestChessBoard(TestCase):
         (('h', 8), 8, [('g', 7), ('f', 6), ('e', 5), ('d', 4), ('c', 3), ('b', 2), ('a', 1)]),
     ])
     def test_num_of_positions_south_west_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.south_west(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -155,7 +155,7 @@ class TestChessBoard(TestCase):
         (('h', 8), 8, []),
     ])
     def test_num_of_positions_south_east_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.south_east(num_of_steps)
         self.assertEqual(expected, positions)
 
@@ -177,6 +177,6 @@ class TestChessBoard(TestCase):
         (('h', 1), 8, [('g', 2), ('f', 3), ('e', 4), ('d', 5), ('c', 6), ('b', 7), ('a', 8)]),
     ])
     def test_num_of_positions_north_west_from_current(self, start_pos, num_of_steps, expected):
-        alg_not = Position(start_pos)
+        alg_not = Pos(start_pos)
         positions = alg_not.north_west(num_of_steps)
         self.assertEqual(expected, positions)

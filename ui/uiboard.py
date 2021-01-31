@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.locals import *
+from chessboard.board import Square
 import string
 
 
@@ -20,7 +21,7 @@ class UIBoard(Rect):
                 self.drawn_squares.append(
                     UISquare(self.top + self.__square_size * cell_idx, self.left + self.__square_size * row_idx,
                              self.__square_size, self.__square_size,
-                             self.board[let+str(num)]))
+                             self.board[(let, num)]))
         return self
 
     def draw_board(self):
@@ -39,13 +40,14 @@ class UIBoard(Rect):
 
     def get_other_highlighted_squares(self, to_exclude):
         return list(filter(lambda x: x != to_exclude, filter(lambda x: x.highlighted, self.drawn_squares)))
-#TODO: Decorator pattern for drawn_square
+
+    # TODO: Decorator pattern for drawn_square
     def manage_left_click(self, position):
         clicked_square = next(filter(lambda x: x.collidepoint(position), self.drawn_squares), None)
         if not clicked_square:
             return
         if clicked_square.move_candidate:
-            highlighted_square = next(filter(lambda x: x.highlighted,self.drawn_squares))
+            highlighted_square = next(filter(lambda x: x.highlighted, self.drawn_squares))
             highlighted_square.square.move_piece(clicked_square.square)
             for square in self.drawn_squares:
                 square.highlighted = False

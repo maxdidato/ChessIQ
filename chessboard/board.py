@@ -28,46 +28,39 @@ class ChessBoard(dict):
 
     def possible_moves(self, square):
         possible_moves = []
-        for positions in square.piece.possible_moves().get_directional_moves():
-            for position in [str(i[0]) + str(i[1]) for i in positions]:
-                candidate_square = self[position]
-                if candidate_square.piece:
-                    if candidate_square.piece.color != square.piece.color:
-                        possible_moves.append(position)
-                    break
-                else:
-                    possible_moves.append(position)
-        for position in [str(i[0]) + str(i[1]) for i in square.piece.possible_moves().get_non_directional_moves()]:
-            candidate_square = self[position]
-            if not candidate_square.piece or candidate_square.piece.color != square.piece.color:
+        for dir_moves in square.piece.possible_moves():
+            for position in dir_moves:
                 possible_moves.append(position)
+                if self[position].piece:
+                    if self[position].piece.color == square.piece.color:
+                        possible_moves.remove(position)
+                    break
         return possible_moves
 
     def __initial_pieces_setting(self):
-        self['a8'].place_piece(Rook(Color.BLACK))
-        self['b8'].place_piece(Knight(Color.BLACK))
-        self['c8'].place_piece(Bishop(Color.BLACK))
-        self['d8'].place_piece(Queen(Color.BLACK))
-        self['e8'].place_piece(King(Color.BLACK))
-        self['f8'].place_piece(Bishop(Color.BLACK))
-        self['g8'].place_piece(Knight(Color.BLACK))
-        self['h8'].place_piece(Rook(Color.BLACK))
+        self[('a', 8)].place_piece(Rook(Color.BLACK))
+        self[('b', 8)].place_piece(Knight(Color.BLACK))
+        self[('c', 8)].place_piece(Bishop(Color.BLACK))
+        self[('d', 8)].place_piece(Queen(Color.BLACK))
+        self[('e', 8)].place_piece(King(Color.BLACK))
+        self[('f', 8)].place_piece(Bishop(Color.BLACK))
+        self[('g', 8)].place_piece(Knight(Color.BLACK))
+        self[('h', 8)].place_piece(Rook(Color.BLACK))
         for letter in list(string.ascii_lowercase[0:8]):
-            self[letter + '7'].place_piece(Pawn(Color.BLACK))
-        self['a1'].place_piece(Rook(Color.WHITE))
-        self['b1'].place_piece(Knight(Color.WHITE))
-        self['c1'].place_piece(Bishop(Color.WHITE))
-        self['d1'].place_piece(Queen(Color.WHITE))
-        self['e1'].place_piece(King(Color.WHITE))
-        self['f1'].place_piece(Bishop(Color.WHITE))
-        self['g1'].place_piece(Knight(Color.WHITE))
-        self['h1'].place_piece(Rook(Color.WHITE))
+            self[(letter, 7)].place_piece(Pawn(Color.BLACK))
+        self[('a', 1)].place_piece(Rook(Color.WHITE))
+        self[('b', 1)].place_piece(Knight(Color.WHITE))
+        self[('c', 1)].place_piece(Bishop(Color.WHITE))
+        self[('d', 1)].place_piece(Queen(Color.WHITE))
+        self[('e', 1)].place_piece(King(Color.WHITE))
+        self[('f', 1)].place_piece(Bishop(Color.WHITE))
+        self[('g', 1)].place_piece(Knight(Color.WHITE))
+        self[('h', 1)].place_piece(Rook(Color.WHITE))
         for letter in list(string.ascii_lowercase[0:8]):
-            self[letter + '2'].place_piece(Pawn(Color.WHITE))
+            self[(letter, 2)].place_piece(Pawn(Color.WHITE))
 
     def __initialize(self):
         for i, num in enumerate(reversed(range(1, 9))):
             for j, let in enumerate(list(string.ascii_lowercase[0:8])):
-                algebraic_notation = str(let) + str(num)
                 color = Color.LIGHT if (i + j) % 2 == 0 else Color.DARK
-                self[algebraic_notation] = Square(color, algebraic_notation)
+                self[(let, num)] = Square(color, (let, num))
