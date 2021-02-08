@@ -1,4 +1,5 @@
 import string
+from chessboard import color
 from ui.uisquare import *
 
 
@@ -6,6 +7,7 @@ class UIBoard(Rect):
 
     def __init__(self, left, top, board_size, to_draw):
         self.board = to_draw
+        self.turn = color.Color.WHITE
         self.drawn_squares = []
         self.__square_size = board_size / 8
         self.__screen = pg.display.set_mode([500, 500])
@@ -45,8 +47,9 @@ class UIBoard(Rect):
         clicked_square = self.find_clicked_square(coordinates)
         if clicked_square.has_state(MoveCandidate):
             self.board.move_piece(self.get_highlighted_square().alg_not,clicked_square.alg_not)
+            self.turn = color.Color.WHITE if self.turn == color.Color.BLACK else color.Color.BLACK
             self.reset_squares_to_default()
-        elif clicked_square.square.piece:
+        elif clicked_square.square.piece and clicked_square.square.piece.color == self.turn:
             self.reset_squares_to_default()
             clicked_square.left_click()
             if clicked_square.has_state(Highlighted):
