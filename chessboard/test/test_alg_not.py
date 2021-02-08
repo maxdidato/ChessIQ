@@ -3,7 +3,7 @@ from chessboard.pieces import Pos
 from parameterized import parameterized
 
 
-class TestChessBoard(TestCase):
+class TestPos(TestCase):
 
     @parameterized.expand([
         (('a', 1), 1, [('a', 2)]),

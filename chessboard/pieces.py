@@ -1,4 +1,6 @@
 from chessboard.color import *
+from abc import abstractmethod
+
 
 class Piece:
     def __init__(self, color, name, icon):
@@ -9,6 +11,10 @@ class Piece:
 
     def set_position(self, position):
         self.position = position
+
+    @abstractmethod
+    def possible_moves(self):
+        pass
 
 
 class Knight(Piece):

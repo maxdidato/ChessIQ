@@ -9,14 +9,17 @@ class Square:
         self.alg_not = alg_not
         self.piece = None
 
-    def move_piece(self, dest_square):
-        dest_square.piece = self.piece
-        dest_square.piece.position = dest_square.alg_not
-        self.piece = None
-
     def place_piece(self, piece):
         self.piece = piece
         piece.position = self.alg_not
+
+
+class IllegalMove(Exception):
+
+    def __init__(self, piece, source_pos, dest_pos):
+        super().__init__(
+            "Piece " + piece.color.name + " " + piece.name + " cannot be moved from " + str(source_pos) + " to " + str(
+                dest_pos))
 
 
 class ChessBoard(dict):
@@ -25,6 +28,12 @@ class ChessBoard(dict):
         super().__init__()
         self.__initialize()
         self.__initial_pieces_setting()
+
+    def move_piece(self, source, dest):
+        if dest not in self.possible_moves(self[source]):
+            raise IllegalMove(self[source].piece, self[source].alg_not, self[dest].alg_not)
+        self[dest].place_piece(self[source].piece)
+        self[source].piece = None
 
     def possible_moves(self, square):
         possible_moves = []

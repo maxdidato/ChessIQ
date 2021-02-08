@@ -1,7 +1,5 @@
-import pygame as pg
-from pygame.locals import *
-from chessboard.board import Square
 import string
+from ui.uisquare import *
 
 
 class UIBoard(Rect):
@@ -19,57 +17,48 @@ class UIBoard(Rect):
         for row_idx, num in enumerate(reversed(range(1, 9))):
             for cell_idx, let in enumerate(list(string.ascii_lowercase[0:8])):
                 self.drawn_squares.append(
-                    UISquare(self.top + self.__square_size * cell_idx, self.left + self.__square_size * row_idx,
+                    UISquare(self.__screen, self.top + self.__square_size * cell_idx,
+                             self.left + self.__square_size * row_idx,
                              self.__square_size, self.__square_size,
                              self.board[(let, num)]))
         return self
 
     def draw_board(self):
         for drawn_square in self.drawn_squares:
-            if drawn_square.highlighted:
-                pg.draw.rect(self.__screen, pg.Color('yellow'), drawn_square, 0)
-            elif drawn_square.move_candidate:
-                pg.draw.rect(self.__screen, pg.Color('lightblue'), drawn_square, 0)
-            else:
-                pg.draw.rect(self.__screen, pg.Color(drawn_square.square.color.value), drawn_square, 0)
-            if drawn_square.square.piece:
-                f = pg.font.Font("segoe-ui-symbol.ttf", int(self.__square_size))
-                self.__screen.blit(
-                    f.render(drawn_square.square.piece.icon, True, pg.Color(drawn_square.square.piece.color.value)),
-                    (drawn_square.left, drawn_square.top))
+            drawn_square.draw()
 
-    def get_other_highlighted_squares(self, to_exclude):
-        return list(filter(lambda x: x != to_exclude, filter(lambda x: x.highlighted, self.drawn_squares)))
+    def highlight_possible_moves(self, ui_square):
+        for move in self.board.possible_moves(ui_square.square):
+            next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).change_state(MoveCandidate)
 
-    # TODO: Decorator pattern for drawn_square
-    def manage_left_click(self, position):
-        clicked_square = next(filter(lambda x: x.collidepoint(position), self.drawn_squares), None)
-        if not clicked_square:
-            return
-        if clicked_square.move_candidate:
-            highlighted_square = next(filter(lambda x: x.highlighted, self.drawn_squares))
-            highlighted_square.square.move_piece(clicked_square.square)
-            for square in self.drawn_squares:
-                square.highlighted = False
-                square.move_candidate = False
-            return
+    def find_clicked_square(self, coordinates):
+        return next(filter(lambda x: x.collidepoint(coordinates), self.drawn_squares), None)
+
+    def get_highlighted_square(self):
+        return next(filter(lambda x: x.has_state(Highlighted), self.drawn_squares))
+
+    def reset_squares_to_default(self):
         for square in self.drawn_squares:
-            square.highlighted = False
-            square.move_candidate = False
-        if clicked_square and clicked_square.square.piece:
-            clicked_square.toggle_highlight()
-            if clicked_square.highlighted:
-                for move in self.board.possible_moves(clicked_square.square):
-                    next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).move_candidate = True
-        # for square in self.get_other_highlighted_squares(clicked_square):
-        #     square.highlighted = False
+            square.change_state(Default)
+
+    def manage_left_click(self, coordinates):
+        clicked_square = self.find_clicked_square(coordinates)
+        if clicked_square.has_state(MoveCandidate):
+            self.board.move_piece(self.get_highlighted_square().alg_not,clicked_square.alg_not)
+            self.reset_squares_to_default()
+        elif clicked_square.square.piece:
+            self.reset_squares_to_default()
+            clicked_square.left_click()
+            if clicked_square.has_state(Highlighted):
+                self.highlight_possible_moves(clicked_square)
 
     def start(self):
         self.__initialise()
         while True:
             for event in pg.event.get():
                 if event.type == MOUSEBUTTONUP:
-                    self.manage_left_click(event.pos)
+                    if self.collidepoint(event.pos):
+                        self.manage_left_click(event.pos)
                 if event.type == QUIT:
                     pg.quit()
             self.draw_board()
@@ -77,13 +66,3 @@ class UIBoard(Rect):
             pg.display.update()
 
 
-class UISquare(Rect):
-
-    def __init__(self, left, top, width, height, square):
-        self.square = square
-        self.highlighted = False
-        self.move_candidate = False
-        super().__init__(left, top, width, height)
-
-    def toggle_highlight(self):
-        self.highlighted = not self.highlighted
