@@ -79,7 +79,10 @@ class Pawn(Piece):
 
     def possible_moves(self):
         position = Pos((self.position[0], int(self.position[1])))
-        return [position.north(1)] if self.color == Color.WHITE else [position.south(1)]
+        if self.color == Color.WHITE:
+            return [position.north(1 + (self.position[1] == 2))]
+        else:
+            return [position.south(1 + (self.position[1] == 7))]
 
 
 class King(Piece):

@@ -62,6 +62,16 @@ class TestPieces(TestCase):
                          [[('d', 6)]]
                          )
 
+    def test_black_pawn_initial_moves(self):
+        pawn = Pawn(Color.BLACK)
+        pawn.position = ('d', 7)
+        self.assertEqual(pawn.possible_moves(), [[('d', 6), ('d', 5)]])
+
+    def test_white_pawn_initial_moves(self):
+        pawn = Pawn(Color.WHITE)
+        pawn.position = ('d', 2)
+        self.assertEqual(pawn.possible_moves(), [[('d', 3), ('d', 4)]])
+
     def test_pawn_moves_when_not_all_available(self):
         pawn = Pawn(Color.BLACK)
         pawn.position = ('a', 1)
