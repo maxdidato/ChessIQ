@@ -1,14 +1,18 @@
+from abc import abstractmethod
+
 import pygame as pg
 from pygame.locals import *
-from abc import abstractmethod
+
+from chessboard.board import ChessBoard
+from chessboard.board import Square
 
 
 class UISquare(Rect):
 
     def __init__(self, screen, left, top, width, height, square):
-        self.square = square
+        self.square: Square = square
         self.screen = screen
-        self.alg_not = square.alg_not
+        self.alg_not: ChessBoard.AlgNot = square.alg_not
         super().__init__(left, top, width, height)
         self.state = Default(self)
 
