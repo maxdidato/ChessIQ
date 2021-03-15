@@ -1,4 +1,5 @@
 import string
+import time
 from typing import *
 
 from chessboard import color
@@ -16,7 +17,9 @@ class UIBoard(Rect):
         super().__init__(left, top, board_size, board_size)
 
     def __initialise(self):
-        pg.init()
+        pg.display.init()
+        pg.font.init()
+        pg.mixer.quit()
         self.__screen.fill((255, 255, 255))
         for row_idx, num in enumerate(reversed(range(1, 9))):
             for cell_idx, let in enumerate(list(string.ascii_lowercase[0:8])):
@@ -33,7 +36,7 @@ class UIBoard(Rect):
 
     def highlight_possible_moves(self, ui_square: UISquare):
         for move in self.board.possible_moves(ui_square.square):
-            if not self.board.is_move_leaving_king_in_check(ui_square.square, move):
+            if not self.board.is_move_leaving_king_in_check(ui_square.alg_not, move):
                 next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).change_state(MoveCandidate)
 
     def find_clicked_square(self, coordinates) -> UISquare:
@@ -72,3 +75,4 @@ class UIBoard(Rect):
             self.draw_board()
             pg.display.flip()
             pg.display.update()
+            time.sleep(0.1)

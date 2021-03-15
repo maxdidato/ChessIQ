@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from chessboard.board import *
 
 
@@ -80,3 +81,60 @@ class TestChessBoard(TestCase):
         board[('b', 1)].place_piece(Pawn(Color.WHITE))
         possible_moves = board.possible_moves(board[('a', 1)])
         self.assertEqual(possible_moves, [('b', 3), ('c', 2)])
+
+    def test_king_in_check_when_opponent_piece_can_attach_the_king(self):
+        board = ChessBoard()
+
+        # clear board
+        for square in board.values():
+            square.piece = None
+
+        board[('c', 8)].place_piece(King(Color.BLACK))
+        board[('c', 1)].place_piece(Queen(Color.WHITE))
+        board[('b', 2)].place_piece(King(Color.WHITE))
+
+        self.assertTrue(board.is_king_in_check(Color.BLACK))
+        self.assertFalse(board.is_king_in_check(Color.WHITE))
+
+    def test_king_in_check_and_then_covered(self):
+        board = ChessBoard()
+
+        # clear board
+        for square in board.values():
+            square.piece = None
+
+        board[('c', 8)].place_piece(King(Color.BLACK))
+        board[('c', 1)].place_piece(Queen(Color.WHITE))
+        board[('b', 2)].place_piece(King(Color.WHITE))
+        self.assertTrue(board.is_king_in_check(Color.BLACK))
+        board[('c', 2)].place_piece(Pawn(Color.WHITE))
+
+        self.assertFalse(board.is_king_in_check(Color.BLACK))
+
+    def test_if_move_doesnt_leave_king_in_check(self):
+        board = ChessBoard()
+
+        # clear board
+        for square in board.values():
+            square.piece = None
+
+        board[('c', 8)].place_piece(King(Color.BLACK))
+        board[('c', 7)].place_piece(Bishop(Color.BLACK))
+        board[('c', 1)].place_piece(Queen(Color.WHITE))
+        self.assertFalse(board.is_king_in_check(Color.BLACK))
+
+        self.assertTrue(board.is_move_leaving_king_in_check(('c', 7), ('e', 5)))
+
+    def test_if_move_leaves_king_in_check(self):
+        board = ChessBoard()
+
+        # clear board
+        for square in board.values():
+            square.piece = None
+
+        board[('c', 8)].place_piece(King(Color.BLACK))
+        board[('c', 7)].place_piece(Pawn(Color.BLACK))
+        board[('c', 1)].place_piece(Queen(Color.WHITE))
+        self.assertFalse(board.is_king_in_check(Color.BLACK))
+
+        self.assertFalse(board.is_move_leaving_king_in_check(('c', 7), ('c', 6)))

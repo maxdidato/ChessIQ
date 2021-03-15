@@ -2,7 +2,6 @@ import copy
 import string
 from typing import *
 
-from chessboard.color import *
 from chessboard.pieces import *
 
 
@@ -16,6 +15,8 @@ class Square:
         self.piece = piece
         piece.position = self.alg_not
 
+    def __lt__(self, other):
+        return self.alg_not < other.alg_not
 
 class IllegalMove(Exception):
 
@@ -36,25 +37,62 @@ class ChessBoard(dict):
     def move_piece(self, source: AlgNot, dest: AlgNot) -> NoReturn:
         if dest not in self.possible_moves(self[source]):
             raise IllegalMove(self[source].piece, self[source].alg_not, self[dest].alg_not)
-        self[dest].place_piece(self[source].piece)
-        self[source].piece = None
+        if self[source].piece.name == 'K' and self[dest].piece and self[dest].piece.color == self[source].piece.color:
+            if dest[0] == 'h':
+                self[Pos(source).east(2)[-1]].place_piece(self[source].piece)
+                self[source].piece = None
+                self[Pos(dest).west(2)[-1]].place_piece(self[dest].piece)
+                self[dest].piece = None
+            else:
+                self[Pos(source).west(2)[-1]].place_piece(self[source].piece)
+                self[source].piece = None
+                self[Pos(dest).east(3)[-1]].place_piece(self[dest].piece)
+                self[dest].piece = None
+        else:
+            self[dest].place_piece(self[source].piece)
+            self[source].piece = None
+            self[dest].piece.moves = self[dest].piece.moves + 1
 
     def possible_moves(self, square: Square) -> List[AlgNot]:
         possible_moves = []
         for dir_moves in square.piece.possible_moves():
             for position in dir_moves:
-                possible_moves.append(position)
                 if self[position].piece:
-                    if self[position].piece.color == square.piece.color:
-                        possible_moves.remove(position)
+                    if self[position].piece.color != square.piece.color and square.piece.straight_capture():
+                        possible_moves.append(position)
                     break
+                else:
+                    possible_moves.append(position)
+        special_moves = square.piece.special_moves() if square.piece.special_moves() else []
+        for special_move in special_moves:
+            if self[special_move].piece and self[special_move].piece.color != square.piece.color:
+                possible_moves.append(special_move)
+        if square.piece.name == 'K':
+            possible_moves = possible_moves + self.castling(square)
         return possible_moves
 
-    def is_move_leaving_king_in_check(self, source_square: Square, dest_position: AlgNot) -> bool:
+    def castling(self, king_square: Square):
+        castling_positions = []
+        rook_squares: List[Square] = list(
+            filter(lambda x: x.piece and x.piece.name == 'R' and x.piece.color == king_square.piece.color,
+                   list(self.values())))
+        rook_squares.sort()  # so I know what is the closer rook
+        if king_square.piece.moves == 0:
+            if rook_squares[0].piece.moves == 0 and not any(
+                    filter(lambda x: self[x].piece, Pos(king_square.alg_not).west(3))):
+                castling_positions.append(rook_squares[0].alg_not)
+            if rook_squares[1].piece.moves == 0 and not any(
+                    filter(lambda x: self[x].piece, Pos(king_square.alg_not).east(2))):
+                castling_positions.append(rook_squares[1].alg_not)
+        return castling_positions
+
+    def is_move_leaving_king_in_check(self, source_position: AlgNot, dest_position: AlgNot) -> bool:
         possible_board = copy.deepcopy(self)
-        possible_board.move_piece(source_square.alg_not, dest_position)
-        if possible_board.is_king_in_check(source_square.piece.color):
+        possible_board.move_piece(source_position, dest_position)
+        if possible_board.is_king_in_check(self[source_position].piece.color):
             return True
+        else:
+            return False
 
     def get_opponent_squares(self, color: Color) -> List[Square]:
         return list(filter(lambda x: x.piece and x.piece.color != color, list(self.values())))
