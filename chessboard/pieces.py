@@ -14,16 +14,8 @@ class Piece:
     def set_position(self, position):
         self.position = position
 
-    @staticmethod
-    def straight_capture():
-        return True
-
     @abstractmethod
     def possible_moves(self):
-        pass
-
-    @abstractmethod
-    def special_moves(self):
         pass
 
 
@@ -93,17 +85,6 @@ class Pawn(Piece):
             return [position.north(1 + (self.moves == 0))]
         else:
             return [position.south(1 + (self.moves == 0))]
-
-    def special_moves(self):
-        position = Pos((self.position[0], int(self.position[1])))
-        if self.color == Color.WHITE:
-            return position.north_west(1) + position.north_east(1)
-        else:
-            return position.south_west(1) + position.south_east(1)
-
-    @staticmethod
-    def straight_capture():
-        return False
 
 
 class King(Piece):

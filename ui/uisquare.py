@@ -12,6 +12,7 @@ class UISquare(Rect):
     def __init__(self, screen, left, top, width, height, square):
         self.square: Square = square
         self.screen = screen
+        self.candidate_move = None
         self.alg_not: ChessBoard.AlgNot = square.alg_not
         super().__init__(left, top, width, height)
         self.state = Default(self)

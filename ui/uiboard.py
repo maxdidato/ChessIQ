@@ -3,6 +3,7 @@ import time
 from typing import *
 
 from chessboard import color
+from chessboard.moves import *
 from ui.uisquare import *
 
 
@@ -36,8 +37,10 @@ class UIBoard(Rect):
 
     def highlight_possible_moves(self, ui_square: UISquare):
         for move in self.board.possible_moves(ui_square.square):
-            if not self.board.is_move_leaving_king_in_check(ui_square.alg_not, move):
-                next(filter(lambda x: x.square.alg_not == move, self.drawn_squares)).change_state(MoveCandidate)
+            if not self.board.is_move_leaving_king_in_check(move):
+                target_square = next(filter(lambda x: x.square.alg_not == move.dest, self.drawn_squares))
+                target_square.change_state(MoveCandidate)
+                target_square.candidate_move = move
 
     def find_clicked_square(self, coordinates) -> UISquare:
         return next(filter(lambda x: x.collidepoint(coordinates), self.drawn_squares), None)
@@ -48,11 +51,12 @@ class UIBoard(Rect):
     def reset_squares_to_default(self) -> NoReturn:
         for square in self.drawn_squares:
             square.change_state(Default)
+            square.candidate_move = None
 
     def manage_left_click(self, coordinates) -> NoReturn:
         clicked_square = self.find_clicked_square(coordinates)
         if clicked_square.has_state(MoveCandidate):
-            self.board.move_piece(self.get_highlighted_square().alg_not, clicked_square.alg_not)
+            self.board.move_piece(clicked_square.candidate_move)
             self.turn = color.Color.WHITE if self.turn == color.Color.BLACK else color.Color.BLACK
             self.reset_squares_to_default()
             if self.board.is_king_in_check(self.turn):
