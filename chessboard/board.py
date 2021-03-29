@@ -49,43 +49,17 @@ class ChessBoard(dict):
         for dir_moves in square.piece.possible_moves():
             for position in dir_moves:
                 if self[position].piece:
-                    if self[position].piece.color != square.piece.color and isinstance(square.piece, Pawn):
+                    if self[position].piece.color != square.piece.color and not isinstance(square.piece, Pawn):
                         possible_moves.append(BasicMove(square.alg_not, position))
                     break
                 else:
                     possible_moves.append(BasicMove(square.alg_not, position))
         if isinstance(square.piece, Pawn):
-            possible_moves = possible_moves + self.pawn_capture(square)
+            possible_moves = possible_moves + pawn_capture(self, square) + en_passant(self, square)
         if isinstance(square.piece, King):
-            possible_moves = possible_moves + self.castling(square)
+            possible_moves = possible_moves + castling(self, square)
         return possible_moves
 
-    def pawn_capture(self, pawn_square: Square) -> List[Move]:
-        position = Pos((pawn_square.alg_not[0], int(pawn_square.alg_not[1])))
-        captures = []
-        if pawn_square.piece.color == Color.WHITE:
-            potential_captures = position.north_west(1) + position.north_east(1)
-        else:
-            potential_captures = position.south_west(1) + position.south_east(1)
-        for potential_capture in potential_captures:
-            if self[potential_capture].has_opponent_piece(pawn_square.piece):
-                captures.append(BasicMove(pawn_square.alg_not, potential_capture))
-        return captures
-
-    def castling(self, king_square: Square) -> List[Move]:
-        castling_positions = []
-        rook_squares: List[Square] = list(
-            filter(lambda x: x.piece and isinstance(x.piece, Rook) and x.piece.color == king_square.piece.color,
-                   list(self.values())))
-        rook_squares.sort()  # so I know what is the closer rook
-        if king_square.piece.moves == 0:
-            if rook_squares[0].piece.moves == 0 and not any(
-                    filter(lambda x: self[x].piece, Pos(king_square.alg_not).west(3))):
-                castling_positions.append(Castling(king_square.alg_not, rook_squares[0].alg_not))
-            if rook_squares[1].piece.moves == 0 and not any(
-                    filter(lambda x: self[x].piece, Pos(king_square.alg_not).east(2))):
-                castling_positions.append(Castling(king_square.alg_not, rook_squares[1].alg_not))
-        return castling_positions
 
     def is_move_leaving_king_in_check(self, move: Move) -> bool:
         possible_board = copy.deepcopy(self)
